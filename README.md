@@ -1,53 +1,46 @@
-# Market Analyst App
+# Analityk Rynku
 
-A small energy-market analytics demo built as a Microsoft Fabric app with Rayfin. The UI is in Polish ("Analityk Rynku"). Prices in the app are synthetic.
+Niewielkie demo analityki rynku energii, zbudowane jako aplikacja Microsoft Fabric na Rayfin. Ceny w aplikacji są syntetyczne.
 
-Polish version: [README.pl.md](README.pl.md).
+Wersja angielska: [README.en.md](README.en.md).
 
-## What it does
+## Co robi aplikacja
 
-After signing in, the user sees four tabs:
+Po zalogowaniu są cztery zakładki. Dashboard pokazuje liczby zbiorcze i instrumenty o największej zmianie ceny. W zakładce Ceny rynkowe jest lista instrumentów z ostatnią ceną, historia notowań, formularz dodania notowania i formularz dodania nowego instrumentu. Alerty to progi cenowe (powyżej lub poniżej wartości) dla instrumentu. Alert jest wyróżniony w interfejsie, gdy ostatnia cena przekroczy próg, ale aplikacja nie wysyła żadnych powiadomień. Notatki to zapiski analityka z oznaczeniem sentymentu, opcjonalnie przypięte do instrumentu.
 
-- **Dashboard** with summary numbers and top movers.
-- **Market prices**: a list of commodities with the latest price and change, price history per commodity, a form to add a price observation and a form to add a new commodity.
-- **Alerts**: price alerts (above/below a threshold) per commodity. An alert is highlighted in the UI when the latest price crosses the threshold. No notifications are sent.
-- **Notes**: analyst notes with a sentiment tag, optionally linked to a commodity.
+Przycisk generowania danych tworzy sześć przykładowych instrumentów (uprawnienia EU ETS, gaz TTF, energia baseload w Niemczech i w Polsce, węgiel API2, ropa Brent) i losowy przebieg cen z 22 dni, opisany jako „Demo feed”. To nie są prawdziwe notowania. Alerty i notatki są zapisywane osobno dla każdego użytkownika.
 
-The seed button creates six sample instruments (EU ETS allowances, Dutch TTF gas, German and Polish baseload power, API2 coal, Brent) with a 22-day random walk of prices labelled "Demo feed". These are not real quotes. Alerts and notes are stored per user.
+## Stos
 
-## Stack
+React 19, Vite 7, Tailwind CSS 4 i TypeScript. Backend to Rayfin (pakiety `@microsoft/rayfin-*`) z usługami auth, data (dialekt MSSQL) i hostingiem statycznym na Microsoft Fabric. Model danych leży w `rayfin/data/`.
 
-- React 19, Vite 7, Tailwind CSS 4, TypeScript
-- Rayfin (`@microsoft/rayfin-*` packages): auth, data (MSSQL dialect) and static hosting on Microsoft Fabric
-- Data model in `rayfin/data/`: `Commodity`, `PriceObservation`, `PriceAlert`, `AnalysisNote`
+## Uruchomienie lokalne
 
-## Running locally
-
-Requirements: Node.js 20+, Docker Desktop (for the local Rayfin backend).
+Potrzebny jest Node.js 20+ i Docker Desktop.
 
 ```bash
 npm ci
-npm run rayfin:db      # apply the schema to the local backend
-npm run dev:local      # local backend in Docker + Vite on http://localhost:5173
+npm run rayfin:db
+npm run dev:local      # http://localhost:5173
 ```
 
-With a localhost API URL the app uses email/password sign-in.
+Przy adresie API na localhost aplikacja loguje e-mailem i hasłem.
 
-## Deploying to Microsoft Fabric
+## Wdrożenie na Microsoft Fabric
 
 ```bash
 npx rayfin login -t <TENANT_ID>
 npm run up
 ```
 
-When the API URL is not localhost, the app uses Fabric (Entra ID) sign-in. After the first deployment add the app URL to `allowedRedirectUris` in `rayfin/rayfin.yml` if the CLI has not done it.
+Poza localhost aplikacja loguje przez Fabric (Entra ID). Po pierwszym wdrożeniu adres aplikacji powinien trafić do `allowedRedirectUris` w `rayfin/rayfin.yml`, jeśli CLI nie dopisało go samo.
 
-`AGENTS.md`, `.agents/` and `.mcp.json` contain the standard Rayfin context for coding agents (skill file and the `@microsoft/rayfin-mcp` server).
+Pliki `AGENTS.md`, `.agents/` i `.mcp.json` to standardowy kontekst Rayfin dla agentów kodujących.
 
-## Disclaimer
+## Zastrzeżenie
 
-This is a demo. Prices are randomly generated and must not be used for any trading or investment decision. The project is not an official Microsoft product.
+To demo. Ceny są losowe i nie nadają się do żadnych decyzji handlowych ani inwestycyjnych. Projekt nie jest oficjalnym produktem Microsoft.
 
-## License
+## Licencja
 
-MIT, see [LICENSE](LICENSE).
+MIT, szczegóły w [LICENSE](LICENSE).
